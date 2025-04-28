@@ -1,0 +1,101 @@
+
+/* Table */
+
+.table-1{
+    height: 100% !important;
+    width: 100%;
+  }
+  
+  .table-head{
+      font-size: .6rem;
+      font-weight: bold !important;
+      color: seagreen !important;
+      text-align: center !important;
+      font-family: monospace !important;
+    }
+    .table-data{
+      font-size: .6rem;
+      text-transform: uppercase;
+      font-weight: bold;
+      text-align: center;
+    }
+    .table-data-value{
+      text-align: center;
+      font-weight: bold;
+      font-size: .7rem;
+    }
+    .title{
+      font-size: .6rem;
+      padding: 0 .5em !important;
+      font-weight: bold;
+      color: black;
+    }
+    .profile-img{
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+    }
+    .user-name {
+      font-size: .7rem;
+      font-family: Verdana, Geneva, Tahoma, sans-serif;
+      text-transform: capitalize;
+    }
+    div:hover{
+      cursor: default;
+    }
+    .v-scroll{
+      min-width: 225px;
+      display: flex;
+      flex-direction: column;
+    }
+    .student-info-container{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: max-content !important;
+      max-width: max-content !important;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+  
+    
+  @media screen and (min-width: 420px) {
+    .table-head{
+      font-size: .7rem;
+    }
+  }
+  @media screen and (min-width: 576px) {
+    .table-head{
+      font-size: .8rem;
+    }
+    .no-data{
+      font-size: .8rem;
+    }
+  }
+  @media screen and (min-width: 767px) {
+    .no-data{
+      font-size: .9rem;
+    }
+    .user-name {
+      font-size: .8rem;
+    }
+    .profile-img{
+      width: 40px;
+      height: 40px;
+    }
+  }
+  @media screen and (min-width: 992px) {
+    .table-head{
+      font-size: .9rem;
+    }
+    .no-data{
+      font-size: 1rem;
+    }
+    .user-name {
+      font-size: .9rem;
+    }
+  }
+
+
+
