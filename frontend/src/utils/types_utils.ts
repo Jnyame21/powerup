@@ -13,15 +13,20 @@ export interface UserData {
   last_login: string;
   img: FileAttachment | string;
   bio: string | null;
-  date_of_birth: string | null
-  gender: 'male' | 'female' | 'other' | null;
-  location: string | null;
+  age: number;
+  gender: string;
+  country: string;
+  city: string;
+  height: number | null;
+  weight: number | null;
 }
 
 export interface WorkoutType {
   id: number;
   name: string;
   description: string;
+  calories_burned_per_minute: number;
+  points_per_minute: number;
   thumbnail: string;
   animation: string;
 }
@@ -29,8 +34,8 @@ export interface WorkoutType {
 export interface Workout {
   id: number;
   workout_type: string;
-  duration: number; // in minutes
+  duration: number;
   calories_burned: number;
+  points: number;
   created_at: string;
-  updated_at: string;
 }

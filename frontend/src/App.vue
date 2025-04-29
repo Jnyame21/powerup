@@ -129,7 +129,7 @@ const continueDeletion = ()=>{
       </div>
 
       <RouterView/>
-      <TheLoader :func="reloadPage" v-if="!userAuthStore.userData && !userAuthStore.fetchedDataLoaded"/>
+      <TheLoader :func="reloadPage" v-if="!userAuthStore.userData && !userAuthStore.workoutTypes"/>
     </div>
     </v-app>
 </template>

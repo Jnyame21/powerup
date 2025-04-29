@@ -17,6 +17,8 @@ urlpatterns = [
 
     # App Data
     path('app/data', get_app_data),
+    path('register', register_user),
+    path('workout/data', get_user_workout_data),
 
     # query
     # path('query', query),

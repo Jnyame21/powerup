@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome to PowerUp</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f6f8fa;
+      padding: 20px;
+    }
+    .container {
+      background-color: #ffffff;
+      max-width: 600px;
+      margin: auto;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .btn {
+      background-color: #4CAF50;
+      color: white;
+      padding: 12px 20px;
+      text-align: center;
+      display: inline-block;
+      border-radius: 5px;
+      text-decoration: none;
+      margin-top: 20px;
+    }
+    .footer {
+      font-size: 12px;
+      color: #888;
+      text-align: center;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="{{logo_url}}" alt="PowerUp Logo" style="width: 100%; max-width: 800px; height: auto; display: block; margin: 0 auto 20px;" />
+    <h2>👋 Welcome to PowerUp, {{first_name}}!</h2>
+    <p>We're thrilled to have you join the PowerUp community.</p>
+    <p>Get ready to:</p>
+    <ul>
+        <li>🔥 Track your workouts</li>
+        <li>🏆 Earn points</li>
+        <li>📈 Monitor your progress</li>
+        <li>🎯 Participate in fitness challenges</li>
+    </ul>
+    <p>Your account has been created and you're all set to begin your fitness journey.</p>
+    <a href="{{app_url}}" class="btn">Start Now</a>
+    <p>If you have any questions or need help, reach out to us anytime at <a href="mailto:{{support_email}}">{{support_email}}</a>.</p>
+    <div class="footer">
+      &copy; 2025 PowerUp · All rights reserved.
+    </div>
+  </div>
+</body>
+</html>

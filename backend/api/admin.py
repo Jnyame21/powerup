@@ -5,3 +5,6 @@ from api.models import *
 admin.site.register(WorkoutType)
 admin.site.register(Workout)
 admin.site.register(UserImageFile)
+admin.site.register(Profile)
+admin.site.register(Community)
+admin.site.register(Challenge)

@@ -32,8 +32,8 @@ onMounted(()=>{
 </script>
 
 <template>
-  <TheHeader v-if="userAuthStore.fetchedDataLoaded"/>
-  <main class="main" v-if="userAuthStore.fetchedDataLoaded">
+  <TheHeader v-if="userAuthStore.workoutTypes"/>
+  <main class="main" v-if="userAuthStore.workoutTypes">
     <NavContainerMob v-if="!elementsStore.onDesk" />
     <NavContainerDesk v-if="elementsStore.onDesk" />
     <div class="pages-container">
@@ -42,7 +42,7 @@ onMounted(()=>{
       </div>
     </div>
   </main>
-  <TheFooter v-if="userAuthStore.fetchedDataLoaded"/>
+  <TheFooter v-if="userAuthStore.workoutTypes"/>
 </template>
 
 <style scoped>

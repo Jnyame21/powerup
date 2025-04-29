@@ -71,7 +71,11 @@ class WorkoutTypeSerializerOne(serializers.ModelSerializer):
         data = super().to_representation(instance)
         if not data['thumbnail']:
             data['thumbnail'] = get_default_image('business_logo')
-               
+        else:
+            data['thumbnail'] = get_file_url(data, 'thumbnail')
+        if data['animation']:
+            data['animation'] = get_file_url(data, 'animation')
+
         return data
 
 

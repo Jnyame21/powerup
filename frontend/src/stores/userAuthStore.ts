@@ -3,7 +3,7 @@ import { defaultAxiosInstance } from '@/utils/axiosInstance'
 import axiosInstance from '@/utils/axiosInstance'
 import { useElementsStore } from '@/stores/elementsStore'
 import router from '@/router'
-import type { UserData, WorkoutType } from '@/utils/types_utils'
+import type { UserData, WorkoutType, Workout } from '@/utils/types_utils'
 
 export interface states {
   userData: UserData | null
@@ -13,7 +13,8 @@ export interface states {
   currentDate: string;
   currentYearStartDate: string;
   currentYearEndDate: string;
-  workoutTypes: WorkoutType[];
+  workoutTypes: WorkoutType[] | null;
+  workoutData: Workout[];
 }
 
 
@@ -27,7 +28,8 @@ export const useUserAuthStore = defineStore('userAuthStore', {
       currentDate: '',
       currentYearStartDate: '',
       currentYearEndDate: '',
-      workoutTypes: [],
+      workoutTypes: null,
+      workoutData: [],
     }
   },
 
@@ -55,6 +57,16 @@ export const useUserAuthStore = defineStore('userAuthStore', {
       try {
         const response = await axiosInstance.get('app/data')
         this.workoutTypes = response.data['workout_types']
+      }
+      catch (e) {
+        return Promise.reject(e)
+      }
+    },
+
+    async getWorkoutData() {
+      try {
+        const response = await axiosInstance.get('workout/data')
+        this.workoutData = response.data['workouts']
         this.fetchedDataLoaded = true
       }
       catch (e) {

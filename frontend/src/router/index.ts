@@ -20,6 +20,9 @@ const checkUser = async (to: any, from: any, next: NavigationGuardNext) => {
   const userAuthStore = useUserAuthStore()
   userAuthStore.getAppData()
   await checkAuth()
+  if (userAuthStore.isAuthenticated && !userAuthStore.fetchedDataLoaded){
+    userAuthStore.getWorkoutData()
+  }
 
   next()
 }
