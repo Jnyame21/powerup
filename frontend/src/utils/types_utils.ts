@@ -1,3 +1,35 @@
+export interface CountriesData{
+  name: string
+  nationality: string
+}
+
+export interface DayData {
+  day: string;
+  pointsEarned: number;
+  duration: number;
+  date: string;
+  caloriesBurned: number;
+  data: Workout[];
+}
+
+export interface WeekData {
+  week: string;
+  pointsEarned: number;
+  duration: number;
+  caloriesBurned: number;
+  days: DayData[];
+  data: Workout[];
+}
+
+export interface MonthData {
+  month: string;
+  pointsEarned: number;
+  duration: number;
+  caloriesBurned: number;
+  weeks: WeekData[];
+  data: Workout[];
+}
+
 export interface FileAttachment {
   filename:  string;
   id: number;
@@ -37,5 +69,5 @@ export interface Workout {
   duration: number;
   calories_burned: number;
   points: number;
-  created_at: string;
+  date: string;
 }

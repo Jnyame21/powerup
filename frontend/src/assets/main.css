@@ -470,7 +470,7 @@ body {
   font-size: 0.8rem !important;
 }
 .v-list-item__content {
-  width: 100%;
+  width: 100% !important;
 }
 .nav-link:hover,
 .nav-link div:hover {

@@ -1,4 +1,6 @@
 import { useUserAuthStore } from "@/stores/userAuthStore";
+import type { CountriesData, MonthData, WeekData } from "@/utils/types_utils";
+
 
 export const getWeekNumberInMonth = (date: Date): number => {
   if (!(date instanceof Date)) {
@@ -10,10 +12,81 @@ export const getWeekNumberInMonth = (date: Date): number => {
   return weekNumber;
 };
 
-interface CountriesData{
-  name: string
-  nationality: string
-}
+export const getWeeksDataInMonth = (year: number, month: number): WeekData[] => {
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const firstDayOfWeek = firstDay.getDay();
+  const lastDate = lastDay.getDate();
+  const weeks = Math.ceil((lastDate + firstDayOfWeek) / 7);
+  const weekData: WeekData[] = [];
+  let dayCount = 1
+  for (let i = 0; i < weeks; i++) {
+    const weekNumber = i + 1;
+    const daysInWeek:{dayName: string; dayDate: string}[] = []
+    if (weekNumber === 1){
+      for (let j = 0; j < (7-firstDayOfWeek); j++){
+        const dayDate = new Date(year, month, dayCount)
+        daysInWeek.push({
+          'dayName': `${dayDate.toLocaleString('default', {'weekday': 'long'}).toUpperCase()}( ${dayDate.toLocaleString('default', {'month': 'long'}).toUpperCase()} ${dayCount} )`,
+          'dayDate': dayDate.toString()
+        })
+        dayCount++
+      }
+    }
+    else{
+      for (let j = 0; j < 7; j++){
+        if (dayCount > lastDate) break;
+        const dayDate = new Date(year, month, dayCount)
+        daysInWeek.push({
+          'dayName': `${dayDate.toLocaleString('default', {'weekday': 'long'}).toUpperCase()}(${dayDate.toLocaleString('default', {'month': 'long'}).toUpperCase()} ${dayCount})`,
+          'dayDate': dayDate.toString()
+        })
+        dayCount++
+      }
+    }
+    weekData.push({
+      week: `WEEK ${weekNumber}`,
+      pointsEarned: 0,
+      duration: 0,
+      caloriesBurned: 0,
+      data: [],
+      days: daysInWeek.map(day => ({day: day.dayName, pointsEarned: 0, duration: 0, caloriesBurned: 0, data: [], date: day.dayDate}))
+    });
+  }
+  return weekData;
+};
+
+export const getCalendarData = (calendarStartDate: Date, calendarEndDate: Date): MonthData[] => {
+  const startMonth = calendarStartDate.getMonth();
+  const startYear = calendarStartDate.getFullYear();
+  const endMonth = calendarEndDate.getMonth();
+  const endYear = calendarEndDate.getFullYear();
+
+  const calendarData: MonthData[] = [];
+  let currentYear = startYear;
+  let currentMonth = startMonth;
+
+  while (currentYear < endYear || (currentYear === endYear && currentMonth <= endMonth)) {
+    const monthName = new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long' }).toUpperCase();
+
+    calendarData.push({
+      month: monthName,
+      pointsEarned: 0,
+      duration: 0,
+      caloriesBurned: 0,
+      weeks: getWeeksDataInMonth(currentYear, currentMonth),
+      data: [],
+    });
+
+    currentMonth++;
+    if (currentMonth > 11) {
+      currentMonth = 0;
+      currentYear++;
+    }
+  }
+
+  return calendarData;
+};
 
 export const countriesData:CountriesData[] = [
   { name: "Afghanistan", nationality: "Afghan" },
@@ -255,4 +328,14 @@ export const formatDateTime = (isoDate: string) => {
   return date.toLocaleString("en-US", options).replace(",", "");
 };
 
+export const formatDuration = (seconds: number): string=> {
+  const hrs = Math.floor(seconds / 3600);
+  const mins = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+  const parts = [];
+  if (hrs > 0) parts.push(`${hrs} hr${hrs > 1 ? 's' : ''}`);
+  if (mins > 0) parts.push(`${mins} min${mins > 1 ? 's' : ''}`);
+  if (secs > 0 || parts.length === 0) parts.push(`${secs} sec${secs > 1 ? 's' : ''}`);
 
+  return parts.join(' ');
+}

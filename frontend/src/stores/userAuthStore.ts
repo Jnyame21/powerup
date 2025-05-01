@@ -3,7 +3,8 @@ import { defaultAxiosInstance } from '@/utils/axiosInstance'
 import axiosInstance from '@/utils/axiosInstance'
 import { useElementsStore } from '@/stores/elementsStore'
 import router from '@/router'
-import type { UserData, WorkoutType, Workout } from '@/utils/types_utils'
+import type { UserData, WorkoutType, Workout, MonthData } from '@/utils/types_utils'
+import { getCalendarData } from '@/utils/util'
 
 export interface states {
   userData: UserData | null
@@ -15,6 +16,7 @@ export interface states {
   currentYearEndDate: string;
   workoutTypes: WorkoutType[] | null;
   workoutData: Workout[];
+  filteredWorkoutData: MonthData[]
 }
 
 
@@ -30,6 +32,7 @@ export const useUserAuthStore = defineStore('userAuthStore', {
       currentYearEndDate: '',
       workoutTypes: null,
       workoutData: [],
+      filteredWorkoutData: [],
     }
   },
 
@@ -57,6 +60,8 @@ export const useUserAuthStore = defineStore('userAuthStore', {
       try {
         const response = await axiosInstance.get('app/data')
         this.workoutTypes = response.data['workout_types']
+        this.currentYearStartDate = response.data['current_year_start_date']
+        this.currentYearEndDate = response.data['current_year_end_date']
       }
       catch (e) {
         return Promise.reject(e)
@@ -78,8 +83,6 @@ export const useUserAuthStore = defineStore('userAuthStore', {
       try {
         const response = await axiosInstance.get('user/data')
         this.userData = response.data
-        this.currentYearStartDate = response.data['current_year_start_date']
-        this.currentYearEndDate = response.data['current_year_end_date']
       }
       catch (error) {
         return Promise.reject(error)

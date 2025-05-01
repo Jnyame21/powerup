@@ -71,13 +71,13 @@ class Workout(models.Model):
     calories_burned = models.FloatField(blank=True, default=0, verbose_name="Calories Burned")
     points = models.FloatField(blank=True, default=0, verbose_name="Points Earned")
     img = models.ForeignKey(UserImageFile, on_delete=models.SET_NULL, null=True, verbose_name="User selfie image", related_name="workout_images")
-    created_at = models.DateTimeField(auto_now_add=True)
+    date = models.DateField(default=timezone.now, verbose_name="Date")
     
     class Meta:
         ordering = ['-id']
 
     def __str__(self):
-        return f"{self.profile} - {self.workout_type} on {self.created_at.date()}"
+        return f"{self.profile} - {self.workout_type} on {self.date}"
 
 
 class Community(models.Model):

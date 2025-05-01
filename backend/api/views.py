@@ -147,9 +147,6 @@ def get_user_data(request):
     }
     profile = Profile.objects.select_related('img').get(user=user)
     user_data.update(ProfileSerializer(profile).data)
-    current_year = timezone.now().year
-    user_data['current_year_start_date'] = datetime(current_year, 1, 1).strftime("%Y-%m-%d")
-    user_data['current_year_end_date'] = datetime(current_year, 12, 31).strftime("%Y-%m-%d")
         
     return Response(user_data, status=200)
 
@@ -158,9 +155,12 @@ def get_user_data(request):
 @permission_classes([AllowAny])
 def get_app_data(request):
     workout_types = WorkoutTypeSerializerOne(WorkoutType.objects.all(), many=True)
+    current_year = timezone.now().year
 
     return Response({
         'workout_types': workout_types.data,
+        'current_year_start_date': datetime(current_year, 1, 1).strftime("%Y-%m-%d"),
+        'current_year_end_date': datetime(current_year, 12, 31).strftime("%Y-%m-%d"),
     }, status=200)
 
 
@@ -201,6 +201,7 @@ def get_user_workout_data(request):
                         workout_type=workout_type,
                         duration=duration,
                         img=selfie,
+                        date=timezone.now().date(),
                         calories_burned=calories_burned,
                         points=points_earned,
                     )
