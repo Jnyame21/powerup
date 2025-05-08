@@ -2,7 +2,7 @@
 import { computed, ref} from 'vue';
 import { useUserAuthStore } from '@/stores/userAuthStore';
 import { useElementsStore } from '@/stores/elementsStore';
-import { formatDate, formatTimeInHHMMSS, countriesData } from '@/utils/util';
+import { formatTimeInHHMMSS, countriesData } from '@/utils/util';
 import type { WorkoutType, Workout } from '@/utils/types_utils';
 import TheLoader from '@/components/TheLoader.vue';
 import NoData from '@/components/NoData.vue';
@@ -23,8 +23,6 @@ const selfieUrl = ref('')
 const video = ref<VNodeRef | null>(null)
 const canvas = ref<VNodeRef | null>(null)
 const form = ref({
-  first_name: '',
-  last_name: '',
   username: '',
   email: '',
   gender: '',
@@ -39,7 +37,7 @@ const form = ref({
 })
 
 const resetForm = () => { 
-  form.value = { first_name: '', last_name: '', email: '', gender: '', age: null, height: null, weight: null, country: '', city: '', bio: '', password: '', password_confirmation: '', username: '' }
+  form.value = { email: '', gender: '', age: null, height: null, weight: null, country: '', city: '', bio: '', password: '', password_confirmation: '', username: '' }
 } 
 
 const workoutTypes = computed(()=>{
@@ -267,7 +265,11 @@ const loginUser = async () => {
       if (error.response) {
         if (error.response.status === 400 && error.response.data.message) {
           elementsStore.ShowOverlay(error.response.data.message, 'red')
-        } else {
+        }
+        else if (error.response.status === 401){
+          elementsStore.ShowOverlay("No account found with the given credentials. Sign up if you don't have an account", 'red')
+        }
+        else {
           elementsStore.ShowOverlay('Oops! something went wrong. Try again later', 'red')
         }
       }
@@ -282,7 +284,7 @@ const loginUser = async () => {
 }
 
 const isRegistrationFormValid = computed(()=>{
-  return !(form.value.first_name && form.value.last_name && form.value.username && form.value.email && form.value.gender && form.value.age && form.value.country && form.value.city && form.value.password && form.value.password_confirmation)
+  return !(form.value.username && form.value.email && form.value.gender && form.value.age && form.value.country && form.value.city && form.value.password && form.value.password_confirmation)
 })
 
 const showRegistrationLoginOverlay = (overlay:string) => {
@@ -315,8 +317,8 @@ const closeOverlay = (element: string) => {
 </script>
 
 <template>
-  <div class="content-wrapper" v-show="elementsStore.activePage === 'MyWorkouts'" :class="{ 'is-active-page': elementsStore.activePage === `MyWorkouts` }">
-    
+  <div id="MyWorkouts" class="content-wrapper" v-show="elementsStore.activePage === 'MyWorkouts'" :class="{ 'is-active-page': elementsStore.activePage === `MyWorkouts` }">
+
     <div id="UserSelfieOverlay" class="overlay">
       <div class="overlay-card">
         <div class="overlay-card-content-container">
@@ -395,8 +397,6 @@ const closeOverlay = (element: string) => {
           </v-chip>
         </div>
         <div class="overlay-card-content-container">
-          <v-text-field class="input-field" v-model="form.first_name" label="FIRST NAME [*]" hint="Enter your first name" density="comfortable" type="text" clearable persistent-hint prepend-inner-icon="mdi-account" />
-          <v-text-field class="input-field" v-model="form.last_name" label="LAST NAME [*]" hint="Enter your last name" density="comfortable" type="text" clearable persistent-hint prepend-inner-icon="mdi-account" />
           <v-text-field class="input-field" v-model="form.username" label="USERNAME [*]" hint="Enter a username" density="comfortable" type="text" clearable persistent-hint prepend-inner-icon="mdi-account" />
           <v-text-field class="input-field" v-model="form.email" label="EMAIL [*]" hint="Enter a valid email" density="comfortable" type="email" clearable persistent-hint prepend-inner-icon="mdi-email" />
           <v-select class="input-field" v-model="form.gender" label="GENDER [*]" :items="['Male', 'Female', 'Other']" hint="Select your gender" density="comfortable" clearable persistent-hint prepend-inner-icon="mdi-gender-male-female" />

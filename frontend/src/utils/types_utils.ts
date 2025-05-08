@@ -38,8 +38,6 @@ export interface FileAttachment {
 
 export interface UserData {
   id: number;
-  first_name: string;
-  last_name: string;
   email: string;
   username: string;
   last_login: string;
@@ -69,5 +67,49 @@ export interface Workout {
   duration: number;
   calories_burned: number;
   points: number;
+  date: string;
+}
+
+export interface UserProfile {
+  id: number;
+  username: string;
+  email: string;
+  gender: string;
+  bio: string;
+  country: string;
+  city: string;
+  age: number;
+  height: number;
+  weight: number;
+  img: string;
+}
+
+export interface ChallengeParticipant {
+  id: number;
+  username: string;
+  points: number;
+  date_joined: string;
+}
+
+export interface Challenge {
+  id: number;
+  name: string;
+  workout_types: string[];
+  description: string;
+  start_date: string;
+  end_date: string;
+  participants: ChallengeParticipant[];
+  date: string;
+}
+
+export interface Community {
+  id: number;
+  name: string;
+  description: string;
+  img: string;
+  admins: UserProfile[];
+  members: UserProfile[];
+  challenges: Challenge[];
+  join_code: string;
   date: string;
 }

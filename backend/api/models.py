@@ -64,6 +64,7 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.username if self.user else None
 
+
 class Workout(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="workouts", null=True)
     workout_type = models.ForeignKey(WorkoutType, on_delete=models.CASCADE, verbose_name="Workout Type", related_name="workouts")
@@ -86,29 +87,44 @@ class Community(models.Model):
     img = models.ForeignKey(UserImageFile, on_delete=models.SET_NULL, null=True, verbose_name="Community Profile Image", related_name="communities")
     admins = models.ManyToManyField(Profile, related_name='admin_communities', blank=True, verbose_name="Community Admins")
     members = models.ManyToManyField(Profile, related_name='communities', blank=True, verbose_name="Community Members")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Created At")
+    join_code = models.CharField(max_length=20, null=True, blank=True)
+    date = models.DateField(default=timezone.now, verbose_name="Date Created")
 
     class Meta:
         ordering = ['-id']
 
     def __str__(self):
         return self.name
+    
+    def save(self, *args, **kwargs):
+        if not self.join_code:
+            self.join_code = self.generate_unique_code()
+        super().save(*args, **kwargs)
+
+    def generate_unique_code(self):
+        from django.utils.crypto import get_random_string
+        while True:
+            code = get_random_string(6).upper()
+            if not Community.objects.filter(join_code=code).exists():
+                return code
 
 
 class Challenge(models.Model):
     name = models.CharField(max_length=255, verbose_name='Challenge Name')
     community = models.ForeignKey(Community, on_delete=models.CASCADE, related_name="challenges")
     description = models.TextField(blank=True, null=True, verbose_name='Challenge Description')
-    workout_type = models.ForeignKey(WorkoutType, on_delete=models.CASCADE, related_name="challenges", verbose_name="Workout Type")
+    workout_types = models.ManyToManyField(WorkoutType, verbose_name="Workout Types", related_name="challenges", blank=True)
     start_date = models.DateField(auto_now_add=True, verbose_name="Start Date")
     end_date = models.DateField(verbose_name="End Date")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Created At")
+    date = models.DateField(default=timezone.now, verbose_name="Date Created")
     
     class Meta:
         ordering = ['-id']
 
+
 class ChallengeParticipant(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="challenge_participants")
     challenge = models.ForeignKey(Challenge, on_delete=models.CASCADE, related_name="participants")
-    progress = models.FloatField(default=0, verbose_name="Progress")
-    joined_at = models.DateTimeField(auto_now_add=True, verbose_name="Joined At")
+    points = models.FloatField(default=0, verbose_name="Points Earned")
+    date_joined = models.DateField(default=timezone.now, verbose_name="Date Joined")
+

@@ -27,25 +27,7 @@ document.addEventListener('click', (event: MouseEvent)=>{
           <img class="img" v-if="!userAuthStore.userData" src="/default_img_2.webp">
         </div>
 
-        <v-card-title v-if="userAuthStore.userData" class="drawer-head">PERSONAL INFORMATION</v-card-title>
-
-        <v-list-item v-if="userAuthStore.userData" class="drawer-item" prepend-icon="mdi-account-outline">
-          <v-list-item-title class="drawer-title">
-            FIRST NAME
-          </v-list-item-title>
-          <v-list-item-subtitle class="drawer-subtitle">
-            {{ userAuthStore.userData.first_name }}
-          </v-list-item-subtitle>
-        </v-list-item>
-
-        <v-list-item v-if="userAuthStore.userData" class="drawer-item" prepend-icon="mdi-card-account-details-outline">
-          <v-list-item-title class="drawer-title">
-            LAST NAME
-          </v-list-item-title>
-          <v-list-item-subtitle class="drawer-subtitle">
-            {{ userAuthStore.userData.last_name }}
-          </v-list-item-subtitle>
-        </v-list-item>
+        <v-card-title v-if="userAuthStore.userData" class="drawer-head">USER INFO</v-card-title>
 
         <v-list-item v-if="userAuthStore.userData" class="drawer-item" prepend-icon="mdi-card-account-details-outline">
           <v-list-item-title class="drawer-title">

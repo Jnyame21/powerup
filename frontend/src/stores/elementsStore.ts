@@ -77,7 +77,7 @@ export const useElementsStore = defineStore('elementsStore', {
     },
 
     ShowDeletionOverlay(func:any, message:string){
-      const overlay = document.getElementById('deleteOverlay')
+      const overlay = document.getElementById('DeleteOverlay')
       this.deleteFunction = func
       this.deleteOverlayMessage = message
       if (overlay){

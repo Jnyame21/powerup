@@ -75,7 +75,7 @@ const logout = async ()=>{
 }
 
 const continueDeletion = ()=>{
-  closeOverlay('deleteOverlay')
+  closeOverlay('DeleteOverlay')
   elementsStore.deleteFunction()
 }
 
@@ -111,14 +111,14 @@ const continueDeletion = ()=>{
       </div>
 
       <!-- Delete Overlay -->
-      <div id="deleteOverlay" class="overlay">
+      <div id="DeleteOverlay" class="overlay">
         <v-card class="overlay-card">
           <v-card-text>
             <p class="overlay-text" >{{ elementsStore.deleteOverlayMessage }}</p>
           </v-card-text>
           <v-card-actions>
             <v-btn class="mr-5" color="red" size="small" variant="flat" @click="continueDeletion">YES</v-btn>
-            <v-btn class="ml-5" color="black" size="small" variant="flat" @click="closeOverlay('deleteOverlay')">NO</v-btn>
+            <v-btn class="ml-5" color="black" size="small" variant="flat" @click="closeOverlay('DeleteOverlay')">NO</v-btn>
           </v-card-actions>
         </v-card>
       </div>
@@ -151,12 +151,10 @@ div:hover{
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-size: .8rem;
 }
-#session-alert{
+
+#AlertOverlay, #LoadingOverlay, #DeleteOverlay{
   z-index: 1000 !important;
 }
 
-#LoadingOverlay{
-  z-index: 1000 !important;
-}
 
 </style>

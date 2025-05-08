@@ -2,9 +2,7 @@ import { defineStore } from 'pinia'
 import { defaultAxiosInstance } from '@/utils/axiosInstance'
 import axiosInstance from '@/utils/axiosInstance'
 import { useElementsStore } from '@/stores/elementsStore'
-import router from '@/router'
-import type { UserData, WorkoutType, Workout, MonthData } from '@/utils/types_utils'
-import { getCalendarData } from '@/utils/util'
+import type { UserData, WorkoutType, Workout, MonthData, Community } from '@/utils/types_utils'
 
 export interface states {
   userData: UserData | null
@@ -16,9 +14,9 @@ export interface states {
   currentYearEndDate: string;
   workoutTypes: WorkoutType[] | null;
   workoutData: Workout[];
+  communitiesData: Community[];
   filteredWorkoutData: MonthData[]
 }
-
 
 export const useUserAuthStore = defineStore('userAuthStore', {
   state: (): states => {
@@ -32,6 +30,7 @@ export const useUserAuthStore = defineStore('userAuthStore', {
       currentYearEndDate: '',
       workoutTypes: null,
       workoutData: [],
+      communitiesData: [],
       filteredWorkoutData: [],
     }
   },
@@ -72,6 +71,7 @@ export const useUserAuthStore = defineStore('userAuthStore', {
       try {
         const response = await axiosInstance.get('workout/data')
         this.workoutData = response.data['workouts']
+        this.communitiesData = response.data['communities']
         this.fetchedDataLoaded = true
       }
       catch (e) {

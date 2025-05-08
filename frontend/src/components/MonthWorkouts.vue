@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useUserAuthStore } from '@/stores/userAuthStore';
 import { useElementsStore } from '@/stores/elementsStore';
 import { formatDuration } from '@/utils/util';
@@ -8,22 +8,11 @@ import NoData from '@/components/NoData.vue';
 
 const userAuthStore = useUserAuthStore()
 const elementsStore = useElementsStore()
+const currentMonthNumber = ref(new Date(userAuthStore.currentDate).getMonth())
 
-interface Props {
-  keyValue: string;
-  title: string;
-  typeValue: string;
-  data: Workout[];
-  caloriesBurned: number;
-  pointsEarned: number;
-  duration: number;
-}
-
-const props = defineProps<Props>()
-
-const groupedWorkoutData = computed(()=>{
+const workoutData = computed(()=>{
   const workoutData:{[workout_type: string]: Workout[]} = {}
-  props.data.forEach(item=> {
+  userAuthStore.workoutData.filter(item=> new Date(item.date).getMonth() === currentMonthNumber.value).forEach(item=> {
     if (!workoutData[item.workout_type]){
       workoutData[item.workout_type] = []
     }
@@ -32,21 +21,22 @@ const groupedWorkoutData = computed(()=>{
   return workoutData
 })
 
+
 </script>
 
 <template>
-  <div :id="`MyWorkoutStats${props.typeValue},${props.keyValue}`" class="content-wrapper" v-show="elementsStore.activePage === `MyWorkoutStats${props.typeValue},${props.keyValue}`" :class="{ 'is-active-page': elementsStore.activePage === `MyWorkoutStats${props.typeValue},${props.keyValue}` }">
+  <div id="MonthWorkouts" class="content-wrapper" v-show="elementsStore.activePage === 'MonthWorkouts'" :class="{ 'is-active-page': elementsStore.activePage === 'MonthWorkouts' }">
     
     <div class="content-header">
-      <h4 class="content-header-title">{{ props.title }}</h4>
+      <h4 class="content-header-title">{{ new Date(userAuthStore.currentDate).toLocaleString('default', { month: 'long' }).toUpperCase() }}</h4>
     </div>
     <div class="content-header">
     </div>
-    <NoData message="Looks like you didn't work out during this time." v-if="props.data.length === 0" />
-    <div class="items-container" v-if="props.data.length > 0">
+    <NoData message="Looks like you didn't work out during this time." v-if="Object.keys(workoutData).length === 0" />
+    <div class="items-container" v-if="Object.keys(workoutData).length > 0">
       <v-container fluid>
       <v-row dense>
-        <v-col v-for="[key, value] in Object.entries(groupedWorkoutData)" :key="key" cols="12" sm="6" md="6" lg="4">
+        <v-col v-for="[key, value] in Object.entries(workoutData)" :key="key" cols="12" sm="6" md="6" lg="4">
           <v-card class="workout-card" elevation="1" rounded="lg">
             <v-card-title class="text-h6 font-weight-bold">{{ key.toUpperCase() }}</v-card-title>
             <v-img :src="userAuthStore.workoutTypes?.find(item=> item.name === key)?.thumbnail" height="200" cover ></v-img>
