@@ -371,7 +371,7 @@ const closeOverlay = (element: string) => {
 
     <!-- working out Overlay -->
     <div id="WorkingOutOverlay" class="overlay flex-all-c bg-white" style="background-color: white">
-      <v-img :src="workoutTypeItem?.thumbnail" height="200" cover style="width: 90%; max-width: 500px; max-height: 200px; border-radius: 8px;"></v-img>
+      <v-img :src="workoutTypeItem?.thumbnail" height="200" cover style="width: 90%; max-width: 500px; max-height: 300px; border-radius: 8px;"></v-img>
       <v-chip class="mb-2 mt-5" :size="elementsStore.btnSize2" color="red">{{ workoutTypeItem?.name.toUpperCase() }}</v-chip>
       <v-chip class="mb-2" :size="elementsStore.btnSize2" color="blue"><v-icon icon="mdi-timer" size="large" />: {{ formatTimeInHHMMSS(workoutTime) }}</v-chip>
       <v-chip class="mb-2" :size="elementsStore.btnSize2" color="blue"><v-icon icon="mdi-star-circle" size="large" />: {{ workoutPointsEarned }}</v-chip>

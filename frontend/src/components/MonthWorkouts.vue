@@ -8,17 +8,18 @@ import NoData from '@/components/NoData.vue';
 
 const userAuthStore = useUserAuthStore()
 const elementsStore = useElementsStore()
-const currentMonthNumber = ref(new Date(userAuthStore.currentDate).getMonth())
+const currentDate = new Date(userAuthStore.currentDate)
+const currentMonth = currentDate.getMonth()
+const currentYear = currentDate.getFullYear()
 
-const workoutData = computed(()=>{
-  const workoutData:{[workout_type: string]: Workout[]} = {}
-  userAuthStore.workoutData.filter(item=> new Date(item.date).getMonth() === currentMonthNumber.value).forEach(item=> {
-    if (!workoutData[item.workout_type]){
-      workoutData[item.workout_type] = []
+const workoutData = computed(() => {
+  return userAuthStore.workoutData.reduce((acc, item) => {
+    const date = new Date(item.date)
+    if (date.getMonth() === currentMonth && date.getFullYear() === currentYear) {
+      (acc[item.workout_type] ||= []).push(item)
     }
-    workoutData[item.workout_type]?.push(item)
-  })
-  return workoutData
+    return acc
+  }, {} as { [workout_type: string]: Workout[] })
 })
 
 
@@ -44,10 +45,10 @@ const workoutData = computed(()=>{
               DURATION <v-icon icon="mdi-timer" color="green" size="small"/>: <v-chip color="blue" size="small">{{ formatDuration(value.map(item=> item.duration).reduce((total, num)=> total + Number(num), 0)) }}</v-chip>
             </v-card-title>
             <v-card-title class="card-title">
-              POINTS EARNED <v-icon icon="mdi-star" color="yellow" size="small"/>: <v-chip color="blue" size="small">{{ Number(value.map(item=> item.points).reduce((total, num)=> total + Number(num), 0)) }} XP</v-chip>
+              POINTS EARNED <v-icon icon="mdi-star" color="yellow" size="small"/>: <v-chip color="blue" size="small">{{ Number(value.map(item=> item.points).reduce((total, num)=> total + Number(num), 0).toFixed(2)) }} XP</v-chip>
             </v-card-title>
             <v-card-title class="card-title">
-              CALORIES BURNED <v-icon icon="mdi-fire" color="red" size="small"/>: <v-chip color="blue" size="small">{{ Number(value.map(item=> item.calories_burned).reduce((total, num)=> total + Number(num), 0)) }} kcal</v-chip>
+              CALORIES BURNED <v-icon icon="mdi-fire" color="red" size="small"/>: <v-chip color="blue" size="small">{{ Number(value.map(item=> item.calories_burned).reduce((total, num)=> total + Number(num), 0).toFixed(2)) }} kcal</v-chip>
             </v-card-title>
           </v-card>
         </v-col>

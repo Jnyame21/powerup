@@ -42,10 +42,10 @@ const todayWorkoutData = computed(()=>{
               DURATION <v-icon icon="mdi-timer" color="green" size="small"/>: <v-chip color="blue" size="small">{{ formatDuration(value.map(item=> item.duration).reduce((total, num)=> total + Number(num), 0)) }}</v-chip>
             </v-card-title>
             <v-card-title class="card-title">
-              POINTS EARNED <v-icon icon="mdi-star" color="yellow" size="small"/>: <v-chip color="blue" size="small">{{ Number(value.map(item=> item.points).reduce((total, num)=> total + Number(num), 0)) }} XP</v-chip>
+              POINTS EARNED <v-icon icon="mdi-star" color="yellow" size="small"/>: <v-chip color="blue" size="small">{{ Number(value.map(item=> item.points).reduce((total, num)=> total + Number(num), 0).toFixed(2)) }} XP</v-chip>
             </v-card-title>
             <v-card-title class="card-title">
-              CALORIES BURNED <v-icon icon="mdi-fire" color="red" size="small"/>: <v-chip color="blue" size="small">{{ Number(value.map(item=> item.calories_burned).reduce((total, num)=> total + Number(num), 0)) }} kcal</v-chip>
+              CALORIES BURNED <v-icon icon="mdi-fire" color="red" size="small"/>: <v-chip color="blue" size="small">{{ Number(value.map(item=> item.calories_burned).reduce((total, num)=> total + Number(num), 0).toFixed(2)) }} kcal</v-chip>
             </v-card-title>
           </v-card>
         </v-col>

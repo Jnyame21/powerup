@@ -49,8 +49,17 @@ channel.bind('community_members_update', (sentData: {data: UserProfile[], action
     }
     else if (sentData.action === 'remove'){
       sentData.data.forEach(item=>{
-        const itemIndex = communityObj.members.findIndex(subItem=> subItem.id === item.id)
-        itemIndex !== -1 ? communityObj.members.splice(itemIndex, 1) : null
+        if (userAuthStore.userData?.username === item.username){
+          const communityName = communityData.value?.name || ''
+          const communityIndex = userAuthStore.communitiesData.findIndex(item=> item.id === communityId)
+          communityIndex !== -1 ? userAuthStore.communitiesData.splice(communityIndex, 1) : null
+          elementsStore.activePage === `MyCommunity,${communityId}` ? elementsStore.activePage = 'MyWorkouts' : null
+          elementsStore.ShowOverlay(`You have been removed from the community "${communityName}"`, 'green')
+        }
+        else {
+          const itemIndex = communityObj.members.findIndex(subItem=> subItem.id === item.id)
+          itemIndex !== -1 ? communityObj.members.splice(itemIndex, 1) : null
+        }
       })
     }
   }
@@ -678,7 +687,7 @@ const closeOverlay = (element: string) => {
     </div>
     <div class="content-header btn-container" v-if="communityData">
       <v-btn @click="showOverlay(`CommunityDescriptionOverlay${props.id}`)" color="blue" icon="mdi-clipboard-text" :size="elementsStore.btnSize1"/>
-      <v-btn class="ml-5" @click="showOverlay(`CommunityCodeOverlay${props.id}`)" color="blue" icon="mdi-clipboard-text" :size="elementsStore.btnSize1"/>
+      <v-btn class="ml-5" @click="showOverlay(`CommunityCodeOverlay${props.id}`)" color="blue" icon="mdi-account-plus" :size="elementsStore.btnSize1"/>
       <v-btn class="ml-5" @click="showOverlay(`CommunityAdminsOverlay${props.id}`)" color="blue" icon="mdi-account-multiple" :size="elementsStore.btnSize1"/>
       <v-btn class="ml-5" @click="showOverlay(`CommunityMembersOverlay${props.id}`)" color="blue" icon="mdi-account-group" :size="elementsStore.btnSize1"/>
       <v-btn class="ml-5" v-if="communityData.admins.find(item=> item.username === userAuthStore.userData?.username)" @click="showOverlay(`CreateChallengeOverlay${props.id}`)" color="blue" prepend-icon="mdi-plus" :size="elementsStore.btnSize1">CHALLENGE</v-btn>
