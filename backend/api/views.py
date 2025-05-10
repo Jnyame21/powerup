@@ -25,7 +25,7 @@ from rest_framework.permissions import AllowAny
 # Other
 from api.models import *
 from api.serializer import *
-from api.utils import log_error, delete_file, use_pusher
+from api.utils import log_error, delete_file, use_pusher, valid_email
 from datetime import datetime
 import json
 import imghdr
@@ -253,6 +253,83 @@ def get_user_workout_data(request):
                         delete_file(community_image)
                     return Response(status=400)
 
+        elif data['type'] == 'addCommunityAdmin':
+            profile = Profile.objects.get(user=user)
+            new_admin = Profile.objects.select_related('user').get(id=int(data['memberId']))
+            community = Community.objects.prefetch_related('admins').get(id=int(data['communityId']))
+            if profile not in community.admins.all():
+                return Response({'message': 'You are not an admin of this community'}, status=400)
+            elif new_admin in community.admins.all():
+                return Response({'message': f"The member you selected is already an admin"}, status=400)
+       
+            with transaction.atomic():
+                try:
+                    community.admins.add(new_admin)
+                except Exception:
+                    transaction.set_rollback(True)
+                    log_error(traceback.format_exc())
+                    return Response(status=400)
+
+            return Response(status=204)
+
+        elif data['type'] == 'removeCommunityAdmin':
+            profile = Profile.objects.get(user=user)
+            old_admin = Profile.objects.select_related('user').get(id=int(data['adminId']))
+            community = Community.objects.prefetch_related('admins').get(id=int(data['communityId']))
+            if profile not in community.admins.all():
+                return Response({'message': 'You are not an admin of this community'}, status=400)
+       
+            with transaction.atomic():
+                try:
+                    community.admins.remove(old_admin)
+                except Exception:
+                    transaction.set_rollback(True)
+                    log_error(traceback.format_exc())
+                    return Response(status=400)
+
+            return Response(status=204)
+        
+        elif data['type'] == 'addCommunityMember':
+            profile = Profile.objects.get(user=user)
+            new_member_user = User.objects.filter(username=data['username']).first()
+            if not new_member_user:
+                return Response({'message': 'Oops! There is no account associated with this username'}, status=400)
+            new_member = Profile.objects.get(user=new_member_user)
+            community = Community.objects.prefetch_related('admins', 'members').get(id=int(data['communityId']))
+            if profile not in community.admins.all():
+                return Response({'message': 'You are not an admin of this community'}, status=400)
+            elif new_member in community.members.all():
+                return Response({'message': f"The member you selected is already a member of the community"}, status=400)
+       
+            with transaction.atomic():
+                try:
+                    community.members.add(new_member)
+                except Exception:
+                    transaction.set_rollback(True)
+                    log_error(traceback.format_exc())
+                    return Response(status=400)
+                
+            return Response(ProfileSerializerOne(new_member).data, status=200)
+        
+        elif data['type'] == 'removeCommunityMember':
+            profile = Profile.objects.get(user=user)
+            member = Profile.objects.select_related('user').get(id=int(data['memberId']))
+            community = Community.objects.prefetch_related('admins').get(id=int(data['communityId']))
+            if profile not in community.admins.all():
+                return Response({'message': 'You are not an admin of this community'}, status=400)
+            elif member in community.admins.all():
+                return Response({'message': 'You cannot remove a member who is an admin. Remove the person from the community admin before'}, status=400)
+       
+            with transaction.atomic():
+                try:
+                    community.members.remove(member)
+                except Exception:
+                    transaction.set_rollback(True)
+                    log_error(traceback.format_exc())
+                    return Response(status=400)
+
+            return Response(status=204)
+        
         elif data['type'] == 'joinCommunity':
             profile = Profile.objects.get(user=user)
             data_obj = json.loads(data['dataObj'])
@@ -261,6 +338,8 @@ def get_user_workout_data(request):
                 return Response({'message': 'Oops! That community code is invalid or has been removed.'}, status=400)
             elif community and profile in community.members.all():
                 return Response({'message': f"You are already a member of the community '{community.name}'"}, status=400)
+            elif RemovedCommunityMember.objects.filter(profile=profile, community=community).exists():
+                return Response({'message': f"You were removed from the community '{community.name}'. You cannot join using the community code"}, status=400)
        
             with transaction.atomic():
                 try:
@@ -274,6 +353,7 @@ def get_user_workout_data(request):
                     transaction.set_rollback(True)
                     log_error(traceback.format_exc())
                     return Response(status=400)
+        
         
         elif data['type'] == 'exitCommunity':
             profile = Profile.objects.get(user=user)
@@ -357,32 +437,31 @@ def get_user_workout_data(request):
         elif data['type'] == 'joinChallenge':
             profile = Profile.objects.get(user=user)
             challenge = Challenge.objects.prefetch_related('participants').get(id=int(data['challengeId']))
+            item_to_create = None
             with transaction.atomic():
                 try:
-                    item_to_create = ChallengeParticipant.objects.create(
-                        profile=profile,
-                        challenge=challenge,
-                        date_joined=timezone.now().date(),
-                    )
-                    return Response(ChallengeParticipantSerializerOne(ChallengeParticipant.objects.select_related('profile__user').get(id=item_to_create.id)).data, status=200)
+                    item_to_create = ChallengeParticipant.objects.create(profile=profile, challenge=challenge, date_joined=timezone.now().date())
                 except Exception:
                     transaction.set_rollback(True)
                     log_error(traceback.format_exc())
                     return Response(status=400)
+            return Response(ChallengeParticipantSerializerOne(ChallengeParticipant.objects.select_related('profile__user').get(id=item_to_create.id)).data, status=200)
         
         elif data['type'] == 'exitChallenge':
             profile = Profile.objects.get(user=user)
             challenge = Challenge.objects.prefetch_related('participants').get(id=int(data['challengeId']))
             challenge_participant = ChallengeParticipant.objects.get(profile=profile, challenge=challenge)
+            challenge_participant_data = ChallengeParticipant(challenge_participant).data
             with transaction.atomic():
                 try:
                     challenge_participant.delete()
-                    return Response(status=204)
                 except Exception:
                     transaction.set_rollback(True)
                     log_error(traceback.format_exc())
                     return Response(status=400)
                 
+            return Response(challenge_participant_data, status=200)
+        
         elif data['type'] == 'deleteChallenge':
             profile = Profile.objects.select_related('user').get(user=user)
             challenge = Challenge.objects.select_related('community').prefetch_related('community__admins').get(id=int(data['itemId']))
@@ -411,6 +490,11 @@ def register_user(request):
     data = request.data
     data_obj = json.loads(data['dataObj'])
     email, username, password = data_obj.get('email').strip(), data_obj.get('username').strip(), data_obj.get('password').strip()
+    img = data['userImage'] if data['userImage'] and data['userImage'] != 'null' else None
+    if img and not imghdr.what(img):
+        return Response({'message': 'Invalid image file. Ensure you upload a valid image file or remove the image'}, status=400)
+    if not valid_email(email):
+        return Response({'message': "Invalid email address. Check your email address and ensure it's valid"}, status=400)
     if User.objects.filter(email=email).exists():
         return Response({'message': 'A user with that email address already exists. Please login if you already have an account.'}, status=400)
     
@@ -418,9 +502,6 @@ def register_user(request):
     height = float(data_obj.get('height')) if data_obj.get('height') and data_obj.get('height') != 'null' else None
     weight = float(data_obj.get('weight')) if data_obj.get('weight') and data_obj.get('weight') != 'null' else None
     bio = data_obj.get('bio').strip() if data_obj.get('bio') and data_obj.get('bio') != 'null' else None
-    img = data['userImage'] if data['userImage'] and data['userImage'] != 'null' else None
-    if img and not imghdr.what(img):
-        return Response({'message': 'Invalid image file. Ensure you upload a valid image file or remove the image'}, status=400)
     
     with transaction.atomic():
         try:

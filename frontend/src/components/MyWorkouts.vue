@@ -210,6 +210,18 @@ const submitWorkout = async () => {
 }
 
 const registerUser = async () => {
+  if (form.value.age && form.value.age < 9){
+    elementsStore.ShowOverlay('You must be at least ten(10) years of age to use this platform', 'red')
+    return;
+  }
+  if (form.value.height && form.value.height <= 0){
+    elementsStore.ShowOverlay("The height must be greater than zero. Leave it blank if you don't know your height", 'red')
+    return;
+  }
+  if (form.value.weight && form.value.weight <= 0){
+    elementsStore.ShowOverlay("The weight must be greater than zero. Leave it blank if you don't know your weight", 'red')
+    return;
+  }
   const formData = new FormData()
   formData.append('dataObj', JSON.stringify(form.value))
   formData.append('userImage', userImage.value || '')
@@ -319,6 +331,7 @@ const closeOverlay = (element: string) => {
 <template>
   <div id="MyWorkouts" class="content-wrapper" v-show="elementsStore.activePage === 'MyWorkouts'" :class="{ 'is-active-page': elementsStore.activePage === `MyWorkouts` }">
 
+    <!-- User selfie Overlay -->
     <div id="UserSelfieOverlay" class="overlay">
       <div class="overlay-card">
         <div class="overlay-card-content-container">
@@ -330,7 +343,7 @@ const closeOverlay = (element: string) => {
           <v-btn v-show="!selfieUrl" variant="flat" size="small" prepend-icon="mdi-camera" color="blue" @click="takeSelfie">take selfie</v-btn>
           <v-btn v-show="selfieUrl" variant="flat" size="small" color="blue" @click="retakeSelfie">Retake</v-btn>
           <v-btn class="ml-5" v-show="selfieUrl" variant="flat" size="small" color="green" @click="submitWorkout">Confirm</v-btn>
-          <v-btn class="ml-5" @click="elementsStore.ShowDeletionOverlay(()=> cancelWorkout(), 'Are you sure you want to cancel this workout? Your progress will be lost')" :ripple="false" variant="flat" color="red" size="small" prepend-icon="mdi-close">Cancel Workout</v-btn>
+          <v-btn class="ml-5" @click="elementsStore.ShowDeletionOverlay(()=> cancelWorkout(), 'Are you sure you want to cancel this workout? Your progress will be lost')" :ripple="false" variant="flat" color="red" size="small" prepend-icon="mdi-close">Cancel</v-btn>
         </div>
       </div>
     </div>
@@ -352,11 +365,11 @@ const closeOverlay = (element: string) => {
       <v-chip class="mb-2" :size="elementsStore.btnSize2" color="blue"><v-icon icon="mdi-timer" size="large" />: {{ formatTimeInHHMMSS(workoutTime) }}</v-chip>
       <v-chip class="mb-2" :size="elementsStore.btnSize2" color="blue"><v-icon icon="mdi-star-circle" size="large" />: {{ workoutPointsEarned }}</v-chip>
       <v-chip class="mb-2" :size="elementsStore.btnSize2" color="blue"><v-icon icon="mdi-fire" size="large" />: {{ workoutCaloriesBurned }}</v-chip>
-      <div class="flex-all-c" style="width: max-content">
-        <v-btn class="mt-5 mb-3" @click="openCamera()" :ripple="false" variant="flat" type="submit" color="green" size="small" prepend-icon="mdi-check-circle">Done</v-btn>
-        <v-btn class="mb-3" v-if="workoutTimer" @click="pauseWorkout()" :ripple="false" variant="flat" color="yellow" size="small" prepend-icon="mdi-pause-circle">Rest</v-btn>
-        <v-btn class="mb-3" v-if="!workoutTimer" @click="startWorkoutTimer()" :ripple="false" variant="flat" color="blue" size="small" prepend-icon="mdi-play-circle">Resume</v-btn>
-        <v-btn @click="elementsStore.ShowDeletionOverlay(()=> cancelWorkout(), 'Are you sure you want to cancel this workout? Your progress will be lost')" :ripple="false" variant="flat" color="red" size="small" prepend-icon="mdi-close">Cancel Workout</v-btn>
+      <div class="flex-all" style="width: max-content">
+        <v-btn @click="openCamera()" :ripple="false" variant="flat" type="submit" color="green" size="small" prepend-icon="mdi-check-circle">Done</v-btn>
+        <v-btn class="ml-3" v-if="workoutTimer" @click="pauseWorkout()" :ripple="false" variant="flat" color="yellow" size="small" prepend-icon="mdi-pause-circle">Rest</v-btn>
+        <v-btn class="ml-3" v-if="!workoutTimer" @click="startWorkoutTimer()" :ripple="false" variant="flat" color="blue" size="small" prepend-icon="mdi-play-circle">Resume</v-btn>
+        <v-btn class="ml-3" @click="elementsStore.ShowDeletionOverlay(()=> cancelWorkout(), 'Are you sure you want to cancel this workout? Your progress will be lost')" :ripple="false" variant="flat" color="red" size="small" prepend-icon="mdi-close">Cancel</v-btn>
       </div>
     </div>
 
@@ -398,7 +411,7 @@ const closeOverlay = (element: string) => {
         </div>
         <div class="overlay-card-content-container">
           <v-text-field class="input-field" v-model="form.username" label="USERNAME [*]" hint="Enter a username" density="comfortable" type="text" clearable persistent-hint prepend-inner-icon="mdi-account" />
-          <v-text-field class="input-field" v-model="form.email" label="EMAIL [*]" hint="Enter a valid email" density="comfortable" type="email" clearable persistent-hint prepend-inner-icon="mdi-email" />
+          <v-text-field class="input-field" v-model="form.email" label="EMAIL [*]" hint="Enter a valid email address" density="comfortable" type="email" clearable persistent-hint prepend-inner-icon="mdi-email" />
           <v-select class="input-field" v-model="form.gender" label="GENDER [*]" :items="['Male', 'Female', 'Other']" hint="Select your gender" density="comfortable" clearable persistent-hint prepend-inner-icon="mdi-gender-male-female" />
           <v-text-field class="input-field" v-model="form.age" label="AGE [*]" hint="Enter your age in years" density="comfortable" type="number" clearable persistent-hint prepend-inner-icon="mdi-calendar" />
           <v-select class="select" :items="countriesData.sort((a, b) => a.name.localeCompare(b.name)).map(item=> item.name)" label="COUNTRY [*]" v-model="form.country"
@@ -429,9 +442,9 @@ const closeOverlay = (element: string) => {
     <div class="items-container" v-if="workoutTypes && workoutTypes.length > 0">
       <v-container>
       <v-row dense>
-        <v-col v-for="_item_ in workoutTypes" :key="_item_.id" cols="12" sm="6" md="4" lg="4">
+        <v-col v-for="_item_ in workoutTypes" :key="_item_.id" cols="12" xs="12" sm="6" md="6" lg="4" >
           <v-card class="workout-card" elevation="1" rounded="lg">
-            <v-card-title class="text-h6 font-weight-bold">{{ _item_.name.toUpperCase() }}</v-card-title>
+            <v-card-title class="text-h6 font-weight-bold text-wrap"  style="word-wrap: break-word;">{{ _item_.name.toUpperCase() }}</v-card-title>
             <v-card-text class="workout-description">{{ _item_.description }}</v-card-text>
             <v-img :src="_item_.thumbnail" height="200" cover ></v-img>
             <v-card-actions>

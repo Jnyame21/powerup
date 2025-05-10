@@ -95,6 +95,25 @@ class ProfileSerializerOne(serializers.ModelSerializer):
         }
 
 
+class ProfileSerializerTwo(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Profile
+        fields = ('id', 'user')
+
+    def get_user(self, obj):
+        return obj.user.username
+    
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+
+        return {
+            'id': data['id'],
+            'username': data['user'],
+        }
+
+
 # Workout Type Serializers
 class WorkoutTypeSerializerOne(serializers.ModelSerializer):
     class Meta:
@@ -148,15 +167,6 @@ class CommunitySerializerOne(serializers.ModelSerializer):
         return [{
             'id': item.id,
             'username': item.user.username,
-            'email': item.user.email,
-            'gender': item.gender,
-            'bio': item.bio,
-            'country': item.country,
-            'city': item.city,
-            'age': item.age,
-            'height': item.height,
-            'weight': item.weight,
-            'img': UserImageFileSerializer(item.img).data['url'] if item.img else get_default_image('staff_img'),
         } for item in obj.admins.all()]
     
     def get_members(self, obj):

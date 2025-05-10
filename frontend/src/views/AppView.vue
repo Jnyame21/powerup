@@ -193,11 +193,9 @@ const closeOverlay = (element: string) => {
       <div id="JoinCommunityOverlay" class="overlay">
         <div class="overlay-card">
           <v-btn @click="closeOverlay('JoinCommunityOverlay')" color="red" size="small" variant="flat" class="close-btn">X</v-btn>
-          <div class="overlay-card-info-container">
-            <v-chip :size="elementsStore.btnSize2" color="red">NB: Fields with [*] are mandatory.</v-chip>
-          </div>
+          <div class="overlay-card-info-container"></div>
           <div class="overlay-card-content-container">
-            <v-text-field class="input-field" v-model="communityData.join_code" label="COMMUNITY CODE [*]" hint="Enter the community code" density="comfortable" type="text" clearable persistent-hint />
+            <v-text-field class="input-field" v-model="communityData.join_code" label="COMMUNITY CODE" hint="Enter the community code" density="comfortable" type="text" clearable persistent-hint />
           </div>
           <div class="overlay-card-action-btn-container">
             <v-btn @click="joinCommunity()" :disabled="!(communityData.join_code)" :ripple="false" variant="flat" type="submit" color="black" size="small" append-icon="mdi-checkbox-marked-circle">JOIN</v-btn>

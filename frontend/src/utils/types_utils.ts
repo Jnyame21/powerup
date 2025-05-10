@@ -84,6 +84,11 @@ export interface UserProfile {
   img: string;
 }
 
+export interface UserProfileTwo {
+  id: number;
+  username: string;
+}
+
 export interface ChallengeParticipant {
   id: number;
   username: string;
@@ -107,7 +112,7 @@ export interface Community {
   name: string;
   description: string;
   img: string;
-  admins: UserProfile[];
+  admins: UserProfileTwo[];
   members: UserProfile[];
   challenges: Challenge[];
   join_code: string;

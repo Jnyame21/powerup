@@ -128,3 +128,8 @@ class ChallengeParticipant(models.Model):
     points = models.FloatField(default=0, verbose_name="Points Earned")
     date_joined = models.DateField(default=timezone.now, verbose_name="Date Joined")
 
+
+class RemovedCommunityMember(models.Model):
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="removed_community_member")
+    community = models.ForeignKey(Community, on_delete=models.CASCADE, related_name="removed_community_member")
+    date = models.DateField(default=timezone.now, verbose_name="Date Joined")

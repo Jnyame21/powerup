@@ -88,7 +88,7 @@ const deleteCommunity = async (item_id: number) => {
           JOIN COMMUNITY
         </v-list-item>
         <h4 v-for="community in userAuthStore.communitiesData" :key="community.id" class="nav-title d-flex align-center justify-space-between">
-          <span class="nav-link" @click="changePage(`MyCommunity,${community.id}`)">{{ community.name }}</span>
+          <span class="nav-link" @click="changePage(`MyCommunity,${community.id}`)">{{ community.name.toUpperCase() }}</span>
           <v-icon v-if="elementsStore.activePage !== `MyCommunity,${community.id}` && community.admins.find(item=> item.username === userAuthStore.userData?.username)" icon="mdi-delete" class="me-2" color="red" @click.stop="elementsStore.ShowDeletionOverlay(()=> deleteCommunity(community.id), 'Are you sure you want to delete this community?. All data including challenges for this community will be lost.')"/>
         </h4>
       </v-list-group>

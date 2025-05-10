@@ -3,7 +3,7 @@ from django.dispatch import receiver
 from api.models import *
 from django.db import transaction
 from api.utils import use_pusher, log_error
-from api.serializer import ProfileSerializerOne, ChallengeParticipantSerializerOne
+from api.serializer import ProfileSerializerOne, ProfileSerializerTwo, ChallengeParticipantSerializerOne
 import traceback
 
 
@@ -25,6 +25,23 @@ def update_community_on_members_change(sender, instance, action, reverse, model,
             data = ProfileSerializerOne(Profile.objects.filter(id__in=pk_set), many=True).data
             try:
                 pusher.trigger(channel, 'community_members_update', {'data': data, 'action': change_type})
+            except Exception:
+                log_error(traceback.format_exc())
+                pass
+
+        transaction.on_commit(send_data)
+
+
+@receiver(m2m_changed, sender=Community.admins.through)
+def update_community_on_admin_change(sender, instance, action, reverse, model, pk_set, **kwargs):
+    if action in ['post_add', 'post_remove']:
+        channel = f"community_{instance.id}"
+        def send_data():
+            pusher = use_pusher()
+            change_type = 'add' if action == 'post_add' else 'remove'
+            data = ProfileSerializerTwo(Profile.objects.filter(id__in=pk_set), many=True).data
+            try:
+                pusher.trigger(channel, 'community_admins_update', {'data': data, 'action': change_type})
             except Exception:
                 log_error(traceback.format_exc())
                 pass
