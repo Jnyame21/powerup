@@ -18,7 +18,7 @@ DATABASES = {
 
 # Cors Config
 CORS_ALLOWED_ORIGINS = [
-    "https://powerup.onrender.com",
+    "https://powerup-1fqe.onrender.com",
 ]
 
 # Pusher

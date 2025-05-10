@@ -322,6 +322,7 @@ def get_user_workout_data(request):
        
             with transaction.atomic():
                 try:
+                    RemovedCommunityMember.objects.create(profile=member, community=community, date=timezone.now().date())
                     community.members.remove(member)
                 except Exception:
                     transaction.set_rollback(True)
