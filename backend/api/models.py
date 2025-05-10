@@ -22,16 +22,7 @@ class UserImageFile(models.Model):
 
 # Create your models here.
 class WorkoutType(models.Model):
-    WORKOUT_CHOICES = [
-        ('running', 'Running'),
-        ('walking', 'Walking'),
-        ('cycling', 'Cycling'),
-        ('hiking', 'Hiking'),
-        ('bodyweight', 'Bodyweight Training'),
-        ('hiit', 'HIIT Workout'),
-        ('yoga', 'Yoga/Stretching'),
-    ]
-    name = models.CharField(max_length=50, unique=True, choices=WORKOUT_CHOICES, verbose_name="Workout Type Name")
+    name = models.CharField(max_length=50, unique=True, verbose_name="Workout Type Name")
     description = models.TextField(blank=True, null=True, verbose_name="Workout Description")
     calories_burned_per_minute = models.FloatField(blank=True, default=6, verbose_name="Calories Burn Rate Per Minute")
     points_per_minute = models.FloatField(blank=True, default=5, verbose_name="Points Earned Per Minute")

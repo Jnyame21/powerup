@@ -33,7 +33,7 @@ import traceback
 
 
 def root(request):
-    return HttpResponse("<h1>NexaSuite</h1>")
+    return HttpResponse("<h1>PowerUp</h1>")
 
 
 @api_view(['GET'])
