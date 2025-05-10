@@ -16,7 +16,6 @@ const elementsStore = useElementsStore()
 const workoutCounter = ref(15)
 const workoutTime = ref(0);
 const workoutTypeItem = ref<WorkoutType | null>(null)
-const workoutTypeItemVidoes = ref<HTMLVideoElement | null>(null)
 const passwordVisibility = ref(false)
 const userImage = ref<File | null>(null)
 const selfieUrl = ref('')
@@ -57,13 +56,11 @@ const startWorkoutTimer =()=> {
   workoutTimer.value = setInterval(() => {
     workoutTime.value++;
   }, 1000);
-  workoutTypeItemVidoes.value?.play()
 }
 
 const pauseWorkout = ()=> {
   clearInterval(workoutTimer.value);
   workoutTimer.value = undefined
-  workoutTypeItemVidoes.value?.pause()
 }
 
 const cancelWorkout = ()=> {
@@ -331,6 +328,20 @@ const closeOverlay = (element: string) => {
 <template>
   <div id="MyWorkouts" class="content-wrapper" v-show="elementsStore.activePage === 'MyWorkouts'" :class="{ 'is-active-page': elementsStore.activePage === `MyWorkouts` }">
 
+    <!-- workout description overlay -->
+    <div id="WorkoutDescriptionOverlay" class="overlay">
+      <div class="overlay-card view-card-1">
+        <v-btn @click="closeOverlay('WorkoutDescriptionOverlay')" color="red" size="small" variant="flat" class="close-btn">X</v-btn>
+        <div class="overlay-card-info-container">
+          <v-chip :size="elementsStore.btnSize1" color="blue">DESCRIPTION</v-chip>
+        </div>
+        <div class="overlay-card-content-container">
+          <pre style="word-wrap: break-word; margin: 1em;">{{ workoutTypeItem?.description }}</pre>
+        </div>
+        <div class="overlay-card-action-btn-container"></div>
+      </div>
+    </div>
+
     <!-- User selfie Overlay -->
     <div id="UserSelfieOverlay" class="overlay">
       <div class="overlay-card">
@@ -360,7 +371,7 @@ const closeOverlay = (element: string) => {
 
     <!-- working out Overlay -->
     <div id="WorkingOutOverlay" class="overlay flex-all-c bg-white" style="background-color: white">
-      <video :src="workoutTypeItem?.animation" ref="workoutTypeItemVidoes" autoplay muted loop style="width: 90%; max-width: 500px; max-height: 200px; border-radius: 8px;"></video>
+      <v-img :src="workoutTypeItem?.thumbnail" height="200" cover style="width: 90%; max-width: 500px; max-height: 200px; border-radius: 8px;"></v-img>
       <v-chip class="mb-2 mt-5" :size="elementsStore.btnSize2" color="red">{{ workoutTypeItem?.name.toUpperCase() }}</v-chip>
       <v-chip class="mb-2" :size="elementsStore.btnSize2" color="blue"><v-icon icon="mdi-timer" size="large" />: {{ formatTimeInHHMMSS(workoutTime) }}</v-chip>
       <v-chip class="mb-2" :size="elementsStore.btnSize2" color="blue"><v-icon icon="mdi-star-circle" size="large" />: {{ workoutPointsEarned }}</v-chip>
@@ -444,8 +455,10 @@ const closeOverlay = (element: string) => {
       <v-row dense>
         <v-col v-for="_item_ in workoutTypes" :key="_item_.id" cols="12" xs="12" sm="6" md="6" lg="4" >
           <v-card class="workout-card" elevation="1" rounded="lg">
-            <v-card-title class="text-h6 font-weight-bold text-wrap"  style="word-wrap: break-word;">{{ _item_.name.toUpperCase() }}</v-card-title>
-            <v-card-text class="workout-description">{{ _item_.description }}</v-card-text>
+            <v-card-title class="text-h6 font-weight-bold text-wrap" style="word-wrap: break-word;">{{ _item_.name.toUpperCase() }}</v-card-title>
+            <v-card-text class="workout-description">
+              <v-chip class="chip-link" @click="showOverlay('WorkoutDescriptionOverlay', _item_)" :size="elementsStore.btnSize1" color="blue">Description</v-chip>
+            </v-card-text>
             <v-img :src="_item_.thumbnail" height="200" cover ></v-img>
             <v-card-actions>
               <v-btn @click="startWorkout(_item_)" :ripple="false" variant="flat" color="blue" size="small" prepend-icon="mdi-lightning-bolt" block>Start Workout</v-btn>
