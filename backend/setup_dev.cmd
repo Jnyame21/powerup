@@ -1,3 +1,3 @@
 @echo off
 set DJANGO_SETTINGS_MODULE=backend.development
-a_powerup_venv
+a_powerup_venv_win11

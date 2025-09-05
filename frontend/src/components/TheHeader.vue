@@ -22,7 +22,7 @@ const showOverlay = (element:string) => {
 
   <header class="header">
     <div class="profile-container" v-if="userAuthStore.userData">
-      <img @click.stop="elementsStore.drawer = !elementsStore.drawer" class="user-img" :src="typeof userAuthStore.userData.img ==='string' ? userAuthStore.userData.img : userAuthStore.userData.img?.url">
+      <img v-if="userAuthStore.userData" @click.stop="elementsStore.drawer = !elementsStore.drawer" class="user-img" :src="typeof userAuthStore.userData.img ==='string' ? userAuthStore.userData.img : userAuthStore.userData.img?.url">
     </div>
     <div class="flex-all">
       <v-chip v-if="elementsStore.pusherState ==='connected'" color="green" :size="elementsStore.btnSize1">{{ elementsStore.pusherState }}</v-chip>

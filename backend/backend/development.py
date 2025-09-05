@@ -16,20 +16,20 @@ DATABASES = {
 
 # DATABASES = {
 #     'default':  dj_database_url.config(
-#         default=os.environ.get('EXTERNAL_DB_URL'),
+#         default=os.environ.get('DATABASE_URL'),
 #         conn_max_age=600,
 #         conn_health_checks=True,
 #     )
 # }
 
-INSTALLED_APPS += ['silk']
+# INSTALLED_APPS += ['silk']
 
-GZIP_MIDDLEWARE = 'django.middleware.gzip.GZipMiddleware'
-if GZIP_MIDDLEWARE in MIDDLEWARE:
-    sec_index = MIDDLEWARE.index(GZIP_MIDDLEWARE)
-    MIDDLEWARE.insert(sec_index + 1, 'silk.middleware.SilkyMiddleware')
-else:
-    MIDDLEWARE.append('silk.middleware.SilkyMiddleware') 
+# GZIP_MIDDLEWARE = 'django.middleware.gzip.GZipMiddleware'
+# if GZIP_MIDDLEWARE in MIDDLEWARE:
+#     sec_index = MIDDLEWARE.index(GZIP_MIDDLEWARE)
+#     MIDDLEWARE.insert(sec_index + 1, 'silk.middleware.SilkyMiddleware')
+# else:
+#     MIDDLEWARE.append('silk.middleware.SilkyMiddleware') 
 
 # Media files
 MEDIA_URL = '/media/'
@@ -46,6 +46,6 @@ PUSHER_KEY = os.environ.get('PUSHER_KEY_DEV')
 PUSHER_SECRET = os.environ.get('PUSHER_SECRET_DEV')
 PUSHER_CLUSTER = os.environ.get('PUSHER_CLUSTER')
 
-# Silk
-SILKY_PYTHON_PROFILER = True
-SILKY_INTERCEPT_PERCENT = 100
+# # Silk
+# SILKY_PYTHON_PROFILER = True
+# SILKY_INTERCEPT_PERCENT = 100

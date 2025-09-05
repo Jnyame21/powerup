@@ -336,7 +336,7 @@ const closeOverlay = (element: string) => {
           <v-chip :size="elementsStore.btnSize1" color="blue">DESCRIPTION</v-chip>
         </div>
         <div class="overlay-card-content-container">
-          <pre style="word-wrap: break-word; margin: 1em;">{{ workoutTypeItem?.description }}</pre>
+          <p style="word-wrap: break-word; margin: 1em;" v-html="workoutTypeItem?.description"></p>
         </div>
         <div class="overlay-card-action-btn-container"></div>
       </div>

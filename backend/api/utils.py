@@ -1,4 +1,5 @@
 import os
+import sys
 from datetime import datetime, timedelta
 
 # django
@@ -13,6 +14,30 @@ import pytz
 from haversine import haversine, Unit
 import logging
 
+
+logger = logging.getLogger(__name__)
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {  # This handler writes logs to standard output
+            'class': 'logging.StreamHandler',
+            'stream': sys.stdout,
+        },
+    },
+    'root': {  # Root logger configuration
+        'handlers': ['console'],
+        'level': 'DEBUG',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        # You can configure other loggers here as needed
+    },
+}
 
 # Base url
 def base_url(value):
@@ -30,6 +55,7 @@ def valid_phone_number(number:str):
         return False
     return True
 
+
 def valid_email(email:str):
     email_validator = EmailValidator()
     try:
@@ -39,9 +65,28 @@ def valid_email(email:str):
     return True
 
 
+# Configure logging
+def configure_logging():
+    # Create a logger
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.DEBUG)  # Set log level to capture debug messages
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+    # Create console handler and set level to debug
+    if not settings.DEBUG:
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(logging.DEBUG)
+        console_handler.setFormatter(formatter)
+        logger.addHandler(console_handler)
+
+    return logger
+
+
+# Initialize the logger
 def log_error(error_message:str):
-    logging.basicConfig(filename='error.log', level=logging.INFO)
-    logging.info(error_message)
+    logger = configure_logging()
+    logger.debug(error_message)
+    logger.info(error_message)
 
 
 def use_pusher():
